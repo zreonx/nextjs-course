@@ -1,3 +1,5 @@
+import DrinksList from "@/components/DrinksList"
+
 const url = 'https://www.thecocktaildb.com/api/json/v1/1/search.php?f=a'
 
 const fetchDrinks = async () => {
@@ -18,12 +20,11 @@ const DrinksPage = async () => {
   
   const data = await fetchDrinks();
 
-  console.log(data);
   
   
   return (
     <div>
-      <h1 className="text-7xl">Drinks Page</h1>
+     <DrinksList drinks={data.drinks} />
     </div>
   );
 };
