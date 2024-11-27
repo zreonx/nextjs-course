@@ -3,6 +3,7 @@
 import { revalidatePath } from 'next/cache';
 import prisma from './db';
 import { redirect } from 'next/navigation';
+import { z } from 'zod';
 
 export const getAllTasks = async () => {
   return await prisma.task.findMany({
@@ -21,6 +22,32 @@ export const createTask = async (formData) => {
   });
 
   revalidatePath('/tasks');
+};
+
+export const createTaskCustom = async (prevState, formData) => {
+  // await new Promise((resolve) => setTimeout(resolve, 1000));
+
+  const content = formData.get('content');
+  const Task = z.object({
+    content: z.string().min(5),
+  });
+
+  try {
+
+    Task.parse({content});
+
+    await prisma.task.create({
+      data: {
+        content,
+      },
+    });
+
+    revalidatePath('/tasks');
+    return { message: 'success' };
+  } catch (error) {
+    console.log(error);
+    return { message: 'error' };
+  }
 };
 
 export const deleteTask = async (formData) => {
@@ -58,5 +85,5 @@ export const editTask = async (formData) => {
     },
   });
 
-  redirect('/tasks')
+  redirect('/tasks');
 };
